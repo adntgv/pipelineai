@@ -15,8 +15,8 @@
 			<Cell span={8}>
 				<input bind:value={block.prompt} placeholder="Enter prompt" />
 				<button
-					on:click={() => {
-						block.output = block.handler(block.prompt, block.input);
+					on:click={async () => {
+						block.output = await block.handler(block.prompt, block.input);
 					}}>Next</button
 				>
 				{#if block.input}
