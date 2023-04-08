@@ -32,8 +32,7 @@
 			})
 		});
 
-		const response = await data.json();
-		return response.response;
+		return data.text();
 	};
 
 	let blocks: RunBlock[] = [
