@@ -3,83 +3,17 @@
 	import ApiKeyDialog from './apiKeyDialog.svelte';
 	import Block from './block.svelte';
 	import type { BlockHandler, RunBlock } from './types';
-	import Button, { Group, Icon } from '@smui/button';
+	import Button, { Group, Icon, Label } from '@smui/button';
 	import Drawer, { AppContent, Content } from '@smui/drawer';
 	import List, { Item, Text } from '@smui/list';
 	import Textfield from '@smui/textfield';
-	import IconButton from '@smui/icon-button';
-
-	let promptHandler: BlockHandler = async (prompt: string, input: string): Promise<string> => {
-		const data = await fetch('http://localhost:5173/api/prompt', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				prompt: prompt,
-				message: input
-			})
-		});
-
-		const response = await data.json();
-		return response.output.response;
-	};
-
-	let googlehandler: BlockHandler = async (_, input: string) => {
-		const data = await fetch('http://localhost:5173/api/google', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				search: input
-			})
-		});
-
-		return data.text();
-	};
-
-	let crawlhandler: BlockHandler = async (_, url: string) => {
-		const data = await fetch('http://localhost:5173/api/crawl', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				url
-			})
-		});
-
-		return data.text();
-	};
-
-	let imaginehandler: BlockHandler = async (_, input: string) => {
-		const data = await fetch('http://localhost:5173/api/imagine', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				prompt: input
-			})
-		});
-
-		return data.text();
-	};
+	import Card from '@smui/card/src/Card.svelte';
+	import { onMount } from 'svelte';
+	import handlers from './handlers';
 
 	const defaultPrompt =
 		'You are helpful AI. Respod only in JSON format! No need for additional information. You respond only with useful content formatted as json. If you have a list of items, return them only as json array';
 
-	let blocks: RunBlock[] = [
-		{
-			prompt: defaultPrompt,
-			input: '',
-			output: '',
-			handler: promptHandler,
-			active: false,
-			type: 'prompt'
-		}
-	];
 
 	let canRun = true;
 	// Run the pipeline
@@ -91,7 +25,7 @@
 			}
 			blocks[i].active = true;
 			await new Promise((resolve) => setTimeout(resolve, 1000));
-			blocks[i].output = await blocks[i].handler(blocks[i].prompt, blocks[i].input);
+			blocks[i].output = await handlers.getHandler(blocks[i].handler)(blocks[i].prompt, blocks[i].input);
 			if (i < blocks.length - 1) {
 				blocks[i + 1].input = blocks[i].output;
 			}
@@ -111,7 +45,7 @@
 					prompt: defaultPrompt,
 					input: '',
 					output: '',
-					handler: promptHandler,
+					handler: type,
 					active: false,
 					type: type
 				};
@@ -121,7 +55,7 @@
 					prompt: '',
 					input: '',
 					output: '',
-					handler: googlehandler,
+					handler: type,
 					active: false,
 					type: type
 				};
@@ -131,7 +65,7 @@
 					prompt: '',
 					input: '',
 					output: '',
-					handler: crawlhandler,
+					handler: type,
 					active: false,
 					type: type
 				};
@@ -141,7 +75,7 @@
 					prompt: '',
 					input: '',
 					output: '',
-					handler: imaginehandler,
+					handler: type,
 					active: false,
 					type: type
 				};
@@ -166,19 +100,37 @@
 
 	let pipelines = [
 		{
+			name: 'Post image',
+			blocks: [
+				{
+					prompt: defaultPrompt,
+					input: '',
+					output: '',
+					handler: 'prompt',
+					active: false,
+					type: 'prompt'
+				}
+			]
+		},
+		{
 			name: 'Default',
 			blocks: [
 				{
 					prompt: defaultPrompt,
 					input: '',
 					output: '',
-					handler: promptHandler,
+					handler: 'prompt',
 					active: false,
 					type: 'prompt'
 				}
 			]
 		}
 	];
+
+	let editingPipelineName = -1;
+	let currentPipeline = 0;
+
+	let blocks: RunBlock[] = pipelines[currentPipeline].blocks;
 
 	const addPipeline = () => {
 		pipelines.push({
@@ -188,7 +140,7 @@
 					prompt: defaultPrompt,
 					input: '',
 					output: '',
-					handler: promptHandler,
+					handler: 'prompt',
 					active: false,
 					type: 'prompt'
 				}
@@ -198,7 +150,24 @@
 		pipelines = pipelines;
 	};
 
-	let editingPipelineName = -1;
+	let debug = true;
+
+	$: jsonBlocks = JSON.stringify(blocks);
+
+	const savePipeline = () => {
+		pipelines[currentPipeline].blocks = blocks;
+		localStorage.setItem('pipelines', JSON.stringify(pipelines));
+	};
+
+	onMount(() => {
+		const stored = localStorage.getItem('pipelines');
+		if (stored) {
+			pipelines = JSON.parse(stored);
+			blocks = pipelines[0].blocks;
+		} else {
+			localStorage.setItem('pipelines', JSON.stringify(pipelines));
+		}
+	});
 </script>
 
 <div class="drawer-container">
@@ -207,7 +176,13 @@
 			<Button variant="outlined" on:click={() => addPipeline()}>Add Pipeline</Button>
 			<List>
 				{#each pipelines as pipeline, index}
-					<Item href="javascript:void(0)" on:click={() => (blocks = pipeline.blocks)}>
+					<Item
+						href="javascript:void(0)"
+						on:click={() => {
+							blocks = pipelines[index].blocks;
+							currentPipeline = index;
+						}}
+					>
 						{#if editingPipelineName === index}
 							<Textfield style="width: 100%;" bind:value={pipeline.name} label="name" />
 							<Button on:click={() => (editingPipelineName = -1)}>save</Button>
@@ -224,14 +199,14 @@
 	<AppContent class="app-content">
 		<main class="main-content">
 			<div
-				style="display: flex; justify-content: space-between; align-items: center; padding: 10px;
-						position: fixed; top: 0;  z-index: 1000;
-					"
+				style="display: flex; justify-content: space-between; align-items: center; padding: 10px;"
 			>
 				<Group style="margin: 0 auto;" variant="outlined">
+					<Button disabled>{pipelines[currentPipeline].name}</Button>
 					<!-- <ApiKeyDialog /> -->
 					<Button variant="outlined" on:click={() => runPipeline()}>Run Pipeline</Button>
 					<Button variant="outlined" on:click={() => stopPipeline()}>Stop Pipeline</Button>
+					<Button variant="outlined" on:click={() => savePipeline()}>Save</Button>
 				</Group>
 				<Group style="margin: 0 auto;" variant="outlined">
 					<Button variant="outlined" on:click={() => addBlock('prompt')}>+ Prompt</Button>
@@ -245,17 +220,22 @@
 					<Cell span={2} />
 
 					<Cell span={8}>
-						<Button
-							on:click={() => {
-								remove(index);
-							}}>remove</Button
-						>
-						<Block {block} />
-						<hr />
+						<Card>
+							<Block {block} />
+							<Button
+								on:click={() => {
+									remove(index);
+								}}>remove</Button
+							>
+							<br />
+						</Card>
 					</Cell>
 					<Cell span={2} />
 				{/each}
 			</LayoutGrid>
+			{#if debug}
+				<Textfield style="width:100%; height:fit-content" textarea bind:value={jsonBlocks} />
+			{/if}
 		</main>
 	</AppContent>
 </div>

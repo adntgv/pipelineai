@@ -1,20 +1,38 @@
 import { json } from '@sveltejs/kit';
+import { env } from '$env/dynamic/private';
+import { Configuration, OpenAIApi } from "openai";
+
 
 export const POST = async (event) => {
-    const { prompt, message } = await event.request.json();
+    try {
+        const { prompt, message } = await event.request.json();
+        const configuration = new Configuration({
+            // api key from sveltekit environment variable
+            apiKey: env.OPENAI_API_KEY
+        });
+        const openai = new OpenAIApi(configuration);
 
-    const output = await fetch('https://api.devspace.kz/v1/chat/completion', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            prompt,
-            message
-        })
-    }).then(async res => {
-        return await res.json()
-    });
+        console.log(prompt, message)
+        const completion = await openai.createChatCompletion({
+            model: "gpt-3.5-turbo",
+            messages: [
+                {
+                    "content": message,
+                    "role": "user"
+                },
+                {
+                    "content": prompt,
+                    "role": "system"
+                }
+            ]
+        });
 
-    return json({ output });
+        console.log(completion.data.choices[0].message?.content);
+
+        return json({ output: completion.data.choices[0].message?.content });
+
+    } catch (error) {
+        console.log(error);
+        return json({ error });
+    }
 }

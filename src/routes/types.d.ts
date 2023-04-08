@@ -6,7 +6,7 @@ export type RunBlock = {
     input: string;
     output: string;
     active: boolean;
-    handler: BlockHandler;
+    handler: string;
     type: string;
 };
 
