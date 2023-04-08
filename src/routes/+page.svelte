@@ -10,6 +10,7 @@
 	import Card from '@smui/card/src/Card.svelte';
 	import { onMount } from 'svelte';
 	import handlers from './handlers';
+	import Actions from '@smui/card/src/Actions.svelte';
 
 	const defaultPrompt =
 		'You are helpful AI. Respod only in JSON format! No need for additional information. You respond only with useful content formatted as json. If you have a list of items, return them only as json array';
@@ -98,6 +99,24 @@
 		blocks = blocks.filter((_, index) => {
 			return index != target;
 		});
+	};
+
+	const moveUp = (index: number) => {
+		if (index > 0) {
+			const temp = blocks[index - 1];
+			blocks[index - 1] = blocks[index];
+			blocks[index] = temp;
+			blocks = blocks;
+		}
+	};
+
+	const moveDown = (index: number) => {
+		if (index < blocks.length - 1) {
+			const temp = blocks[index + 1];
+			blocks[index + 1] = blocks[index];
+			blocks[index] = temp;
+			blocks = blocks;
+		}
 	};
 
 	let pipelines: Pipeline[] = [
@@ -224,12 +243,20 @@
 
 					<Cell span={8}>
 						<Card>
+							<Actions>
+								<Group>
+									<Button on:click={() => moveUp(index)} disabled={index === 0}>Up</Button>
+									<Button on:click={() => moveDown(index)} disabled={index === blocks.length - 1}>
+										Down
+									</Button>
+									<Button
+										on:click={() => {
+											remove(index);
+										}}>remove</Button
+									>
+								</Group>
+							</Actions>
 							<Block {block} />
-							<Button
-								on:click={() => {
-									remove(index);
-								}}>remove</Button
-							>
 							<br />
 						</Card>
 					</Cell>

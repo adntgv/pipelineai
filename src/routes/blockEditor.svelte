@@ -33,7 +33,7 @@
 {#if validBlock(block)}
 	<LayoutGrid>
 		<Cell span={12}>
-			<h1>{block.type}</h1>
+			<p>Type: {block.type}</p>
 		</Cell>
 		{#if block.type == 'prompt'}
 			<Cell span={12}>
