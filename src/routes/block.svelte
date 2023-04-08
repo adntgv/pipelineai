@@ -5,21 +5,20 @@
 
 	import type { RunBlock } from './types';
 	import BlockDetailsDialog from './blockDetailsDialog.svelte';
+	import BlockEditor from './blockEditor.svelte';
 
 	export let block: RunBlock;
 </script>
 
 <div class="run-block mdc-elevation-transition flexy-boy">
-	<Card>
-		<LayoutGrid>
-			<Cell span={1} />
-			<Cell span={10}>
-					<BlockDetailsDialog {block} />
-			</Cell>
-		</LayoutGrid>
+	<LayoutGrid>
+		<Cell span={1} />
+		<Cell span={10}>
+			<BlockEditor {block} />
+		</Cell>
+	</LayoutGrid>
 
-		{#if block.active}
-			<LinearProgress indeterminate />
-		{/if}
-	</Card>
+	{#if block.active}
+		<LinearProgress indeterminate />
+	{/if}
 </div>

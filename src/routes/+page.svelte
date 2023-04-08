@@ -21,7 +21,7 @@
 		return response.output.response;
 	};
 
-	let googlehandler: BlockHandler = async (input: string) => {
+	let googlehandler: BlockHandler = async (_, input: string) => {
 		const data = await fetch('http://localhost:5173/api/google', {
 			method: 'POST',
 			headers: {
@@ -35,8 +35,46 @@
 		return data.text();
 	};
 
+	let crawlhandler: BlockHandler = async (_, url: string) => {
+		const data = await fetch('http://localhost:5173/api/crawl', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				url
+			})
+		});
+
+		return data.text();
+	};
+
+	let imaginehandler: BlockHandler = async (_, input: string) => {
+		const data = await fetch('http://localhost:5173/api/imagine', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				prompt: input
+			})
+		});
+
+		return data.text();
+	};
+
+	const defaultPrompt =
+		'You are helpful AI. Respod only in JSON format! No need for additional information. You respond only with useful content formatted as json. If you have a list of items, return them only as json array';
+
 	let blocks: RunBlock[] = [
-		{ prompt: '', input: '', output: '', handler: promptHandler, active: false, type: 'prompt' }
+		{
+			prompt: defaultPrompt,
+			input: '',
+			output: '',
+			handler: promptHandler,
+			active: false,
+			type: 'prompt'
+		}
 	];
 
 	let canRun = true;
@@ -66,7 +104,7 @@
 		switch (type) {
 			case 'prompt':
 				newBlock = {
-					prompt: '',
+					prompt: defaultPrompt,
 					input: '',
 					output: '',
 					handler: promptHandler,
@@ -80,6 +118,26 @@
 					input: '',
 					output: '',
 					handler: googlehandler,
+					active: false,
+					type: type
+				};
+				break;
+			case 'crawl':
+				newBlock = {
+					prompt: '',
+					input: '',
+					output: '',
+					handler: crawlhandler,
+					active: false,
+					type: type
+				};
+				break;
+			case 'imagine':
+				newBlock = {
+					prompt: '',
+					input: '',
+					output: '',
+					handler: imaginehandler,
 					active: false,
 					type: type
 				};
@@ -105,7 +163,7 @@
 
 <div style="display: flex; justify-content: stretch;">
 	<Group style="margin: 0 auto;" variant="outlined">
-		<ApiKeyDialog />
+		<!-- <ApiKeyDialog /> -->
 
 		<Button variant="outlined" on:click={() => runPipeline()}>Run Pipeline</Button>
 		<Button variant="outlined" on:click={() => stopPipeline()}>Stop Pipeline</Button>
@@ -113,17 +171,23 @@
 </div>
 <LayoutGrid>
 	{#each blocks as block, index}
-		<Cell span={3}>
+		<Cell span={2} />
+
+		<Cell span={8}>
 			<Button
 				on:click={() => {
 					remove(index);
 				}}>remove</Button
 			>
 			<Block {block} />
+			<hr />
 		</Cell>
+		<Cell span={2} />
 	{/each}
 	<Cell span={1}>
 		<Button on:click={() => addBlock('prompt')}>+ Prompt</Button>
 		<Button on:click={() => addBlock('google')}>+ google</Button>
+		<Button on:click={() => addBlock('crawl')}>+ crawl</Button>
+		<Button on:click={() => addBlock('imagine')}>+ imagine</Button>
 	</Cell>
 </LayoutGrid>
