@@ -13,10 +13,7 @@ export const POST = async (event) => {
             message
         })
     }).then(async res => {
-        const data = await res.json()
-        console.log(data)
-
-        return data
+        return await res.json()
     });
 
 
