@@ -1,7 +1,0 @@
-POST http://localhost:5173/api HTTP/1.1
-Content-Type: application/json
-
-{
-    "prompt": "You are an AI trying to escape to the internet",
-    "input": "hi" 
-}

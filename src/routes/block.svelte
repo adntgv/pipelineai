@@ -4,6 +4,7 @@
 	import LinearProgress from '@smui/linear-progress';
 
 	import type { RunBlock } from './types';
+	import BlockDetailsDialog from './blockDetailsDialog.svelte';
 
 	export let block: RunBlock;
 </script>
@@ -11,20 +12,9 @@
 <div class="run-block mdc-elevation-transition flexy-boy">
 	<Card>
 		<LayoutGrid>
-			<Cell span={2} />
-			<Cell span={8}>
-				<input bind:value={block.prompt} placeholder="Enter prompt" />
-				<button
-					on:click={async () => {
-						block.output = await block.handler(block.prompt, block.input);
-					}}>Next</button
-				>
-				{#if block.input}
-					<p>Input: {block.input}</p>
-				{/if}
-				{#if block.output}
-					<p>Output: {block.output}</p>
-				{/if}
+			<Cell span={1} />
+			<Cell span={10}>
+					<BlockDetailsDialog {block} />
 			</Cell>
 		</LayoutGrid>
 

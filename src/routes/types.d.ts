@@ -7,5 +7,6 @@ export type RunBlock = {
     output: string;
     active: boolean;
     handler: BlockHandler;
+    type: string;
 };
 

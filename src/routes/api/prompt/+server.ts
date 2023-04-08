@@ -16,7 +16,5 @@ export const POST = async (event) => {
         return await res.json()
     });
 
-
     return json({ output });
 }
-
