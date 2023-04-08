@@ -1,7 +1,9 @@
 import type { BlockHandler } from "./types";
 
+const host = '';
+
 let promptHandler: BlockHandler = async (prompt: string, input: string): Promise<string> => {
-    const data = await fetch('http://localhost:5173/api/prompt', {
+    const data = await fetch(host + '/api/prompt', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -24,7 +26,7 @@ let promptHandler: BlockHandler = async (prompt: string, input: string): Promise
 };
 
 let googlehandler: BlockHandler = async (_, input: string) => {
-    const data = await fetch('http://localhost:5173/api/google', {
+    const data = await fetch(host + '/api/google', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -45,7 +47,7 @@ let googlehandler: BlockHandler = async (_, input: string) => {
 };
 
 let crawlhandler: BlockHandler = async (_, url: string) => {
-    const data = await fetch('http://localhost:5173/api/crawl', {
+    const data = await fetch(host + '/api/crawl', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -66,7 +68,7 @@ let crawlhandler: BlockHandler = async (_, url: string) => {
 };
 
 let imaginehandler: BlockHandler = async (_, input: string) => {
-    const data = await fetch('http://localhost:5173/api/imagine', {
+    const data = await fetch(host + '/api/imagine', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
