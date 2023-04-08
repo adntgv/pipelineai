@@ -10,3 +10,8 @@ export type RunBlock = {
     type: string;
 };
 
+
+export type Pipeline = {
+    name: string;
+    blocks: RunBlock[];
+};

@@ -2,7 +2,7 @@
 	import LayoutGrid, { Cell } from '@smui/layout-grid';
 	import ApiKeyDialog from './apiKeyDialog.svelte';
 	import Block from './block.svelte';
-	import type { BlockHandler, RunBlock } from './types';
+	import type { BlockHandler, Pipeline, RunBlock } from './types';
 	import Button, { Group, Icon, Label } from '@smui/button';
 	import Drawer, { AppContent, Content } from '@smui/drawer';
 	import List, { Item, Text } from '@smui/list';
@@ -14,7 +14,6 @@
 	const defaultPrompt =
 		'You are helpful AI. Respod only in JSON format! No need for additional information. You respond only with useful content formatted as json. If you have a list of items, return them only as json array';
 
-
 	let canRun = true;
 	// Run the pipeline
 	const runPipeline = async () => {
@@ -25,7 +24,10 @@
 			}
 			blocks[i].active = true;
 			await new Promise((resolve) => setTimeout(resolve, 1000));
-			blocks[i].output = await handlers.getHandler(blocks[i].handler)(blocks[i].prompt, blocks[i].input);
+			blocks[i].output = await handlers.getHandler(blocks[i].handler)(
+				blocks[i].prompt,
+				blocks[i].input
+			);
 			if (i < blocks.length - 1) {
 				blocks[i + 1].input = blocks[i].output;
 			}
@@ -98,7 +100,7 @@
 		});
 	};
 
-	let pipelines = [
+	let pipelines: Pipeline[] = [
 		{
 			name: 'Post image',
 			blocks: [
@@ -133,7 +135,7 @@
 	let blocks: RunBlock[] = pipelines[currentPipeline].blocks;
 
 	const addPipeline = () => {
-		pipelines.push({
+		const newPipeline: Pipeline = {
 			name: 'New Pipeline',
 			blocks: [
 				{
@@ -145,8 +147,9 @@
 					type: 'prompt'
 				}
 			]
-		});
+		};
 
+		pipelines.push(newPipeline);
 		pipelines = pipelines;
 	};
 

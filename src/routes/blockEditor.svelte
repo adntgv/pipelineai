@@ -71,6 +71,7 @@
 			<p>Output: {block.output}</p>
 			{#if block.type == 'imagine' && block.output}
 				{#each getLinks(block.output) as image}
+					<!-- svelte-ignore a11y-missing-attribute -->
 					<img src={image} />
 				{/each}
 			{/if}
