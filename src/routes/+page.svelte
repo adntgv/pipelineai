@@ -84,7 +84,7 @@
 					active: false,
 					type: type
 				};
-			break;
+				break;
 			default:
 				return;
 		}
