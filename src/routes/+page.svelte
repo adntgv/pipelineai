@@ -12,6 +12,7 @@
 	import handlers from './handlers';
 	import Actions from '@smui/card/src/Actions.svelte';
 	import IconButton from '@smui/icon-button';
+	import { Title } from '@smui/dialog';
 
 	const defaultPrompt =
 		'You are helpful AI. Respod only in JSON format! No need for additional information. You respond only with useful content formatted as json. If you have a list of items, return them only as json array';
@@ -141,7 +142,8 @@
 					type: 'prompt'
 				},
 				{
-					prompt:'Generate post ideas for that website that would be interesting for the potential target audience. Only return ideas, without any additional text',
+					prompt:
+						'Generate post ideas for that website that would be interesting for the potential target audience. Only return ideas, without any additional text',
 					input: '',
 					output: '',
 					handler: 'prompt',
@@ -235,6 +237,7 @@
 	<Drawer>
 		<Content>
 			<div>
+				<Title>Pipelines</Title>
 				<IconButton class="material-icons" on:click={() => addPipeline()}>add</IconButton>
 			</div>
 			<List>
@@ -280,15 +283,19 @@
 
 	<AppContent class="app-content">
 		<main class="main-content">
+			<Title>{pipelines[currentPipeline].name}</Title>
+
 			<div
 				style="display: flex; justify-content: space-between; align-items: center; padding: 10px;"
 			>
 				<Group style="margin: 0 auto;" variant="outlined">
-					<Button disabled>{pipelines[currentPipeline].name}</Button>
 					<!-- <ApiKeyDialog /> -->
-					<IconButton class="material-icons" on:click={() => runPipeline()}>play_arrow</IconButton>
-					<IconButton class="material-icons" on:click={() => stopPipeline()}>stop</IconButton>
-					<IconButton class="material-icons" on:click={() => savePipeline()}>save</IconButton>
+					<Button variant="outlined" on:click={() => runPipeline()}>
+						<Icon class="material-icons">play_arrow</Icon>
+						<Label>run pipeline</Label>
+					</Button>
+					<!-- <Button variant="outlined" on:click={() => stopPipeline()}>stop</Button> -->
+					<Button variant="outlined" on:click={() => savePipeline()}>save</Button>
 				</Group>
 				<Group style="margin: 0 auto;" variant="outlined">
 					<Button variant="outlined" on:click={() => addBlock('prompt')}>+ Prompt</Button>
@@ -305,14 +312,26 @@
 						<Card>
 							<Actions>
 								<Group>
-									<Button on:click={() => moveUp(index)} disabled={index === 0}>Up</Button>
-									<Button on:click={() => moveDown(index)} disabled={index === blocks.length - 1}>
-										Down
-									</Button>
-									<Button
+									<IconButton
+										class="material-icons"
+										size="button"
+										on:click={() => moveUp(index)}
+										disabled={index === 0}>arrow_upward</IconButton
+									>
+									<IconButton
+										class="material-icons"
+										size="button"
+										on:click={() => moveDown(index)}
+										disabled={index === blocks.length - 1}
+									>
+										arrow_downward
+									</IconButton>
+									<IconButton
+										class="material-icons"
+										size="button"
 										on:click={() => {
 											remove(index);
-										}}>remove</Button
+										}}>delete</IconButton
 									>
 								</Group>
 							</Actions>
@@ -355,5 +374,9 @@
 		padding: 16px;
 		height: 100%;
 		box-sizing: border-box;
+	}
+
+	.primary {
+		background-color: var(--mdc-theme-primary);
 	}
 </style>
