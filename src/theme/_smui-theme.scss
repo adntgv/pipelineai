@@ -4,22 +4,25 @@
 
 // Svelte Colors!
 @use '@material/theme/index' as theme with (
-  $primary: #ff3e00,
-  $secondary: #676778,
-  $surface: #fff,
-  $background: #fff,
-  $error: color-palette.$red-900
-);
+  $primary: #2ec4b6,
+  $secondary: #011627,
+  $surface: #fdfffc,
+  $background: #fdfffc,
+  $error: color-palette.$red-900);
 
 html,
 body {
   background-color: theme.$surface;
   color: theme.$on-surface;
+  font: 400 16px/1.5 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 a {
   color: #40b3ff;
 }
+
 a:visited {
   color: color.scale(#40b3ff, $lightness: -35%);
 }
