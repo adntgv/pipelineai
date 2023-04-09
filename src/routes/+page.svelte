@@ -18,7 +18,7 @@
 	const defaultPrompt =
 		'You are helpful AI. Respod only in JSON format! No need for additional information. You respond only with useful content formatted as json. If you have a list of items, return them only as json array';
 
-	let piplineGeneratorPrompt = ''
+	let piplineGeneratorPrompt = '';
 	let generatedPipeline = '';
 	let generating = false;
 	let open = false;
@@ -472,7 +472,26 @@
 	<!-- Title cannot contain leading whitespace due to mdc-typography-baseline-top() -->
 	<Title id="simple-title">How to use</Title>
 	<Content id="simple-content">
-		<div class="tutorial">
+		<div class="tutorial" style="padding:0 20px">
+			<h5>What is this</h5>
+			<p>
+				This app allows users to create pipelines of AI blocks that can be used to automate tasks.
+				Users can add different types of blocks, such as prompts, Google searches, website crawls,
+				and image generators, and connect them in any order to create a custom pipeline. The app
+				also allows users to save and manage multiple pipelines, and provides a generator to help
+				users create new pipelines based on their specific needs.
+			</p>
+			<p>
+				This app could be useful for anyone who needs to automate a series of tasks that involve
+				processing data or information. For example, a content marketer could use this app to
+				generate ideas for blog posts by crawling websites and using GPT-3 to generate prompts. A
+				data analyst could use this app to automate data collection and analysis by crawling
+				websites and using Google search. The app would help these users save time and effort by
+				automating repetitive tasks and allowing them to focus on higher-level tasks that require
+				human input and decision-making.
+			</p>
+
+			<h5>How to use the pipeline generator</h5>
 			<p>To use the pipeline generator, follow these steps:</p>
 			<ul>
 				<li>Create a new pipeline or select an existing one from the list.</li>
