@@ -18,11 +18,12 @@
 	const defaultPrompt =
 		'You are helpful AI. Respod only in JSON format! No need for additional information. You respond only with useful content formatted as json. If you have a list of items, return them only as json array';
 
-	let piplineGeneratorPrompt = '';
+	let piplineGeneratorPrompt = ''
 	let generatedPipeline = '';
 	let generating = false;
 	let open = false;
 	let canRun = true;
+	let tutorial = true;
 	// Run the pipeline
 	const runPipeline = async () => {
 		canRun = true;
@@ -228,8 +229,33 @@
 	};
 
 	const generatePipeline = async (input: string) => {
-		let prompt = `
+		let prompt = `You are an expert in automation. 
+		You can create a pipeline of AI blocks. 
+		Each block will take the output of the previous block and use it as input. 
+		You can create a pipeline of any length. 
+		You can use any block type as many times as you want. 
+		You can use any block type as input for any other block type. 
+		You can use any block type as output for any other block type.
+		You can use any block type as input and output for any other block type.
+
+		there are 4 block types:
+		1. Prompt - user can setup 'prompt' and 'input' for this block. You can use this block to get a response from a GPT-3 model
+		2. Google - you can search google with 'input' and get a response. 
+		3. Crawl - you can crawl a website specified in 'input' and get page html. 
+		4. Imagine - you can send 'input' descrupbing image to an image generator and get an image.
+
+
 		
+		example pipelines:
+		1. generate website posts ideas: [{"prompt":"","input":"https://devspace.kz","output":"","handler":"crawl","active":false,"type":"crawl"},{"prompt":"Explain what that is this site about","input":"","output":"","handler":"prompt","active":false,"type":"prompt"},{"prompt":"Generate post ideas for that website that would be interesting for the potential target audience. Only return ideas, without any additional text","input":"","output":"","handler":"prompt","active":false,"type":"prompt"}]
+		2. generate image from post title:  [{"prompt":"Based on provided input about blog post, generate idea of one image that could be used as a cover. Only generate one idea. And describe what should be on that image as thoroughly as possible","input":"","output":"","handler":"prompt","active":false,"type":"prompt"},{"prompt":"","input":"","output":"","handler":"imagine","active":false,"type":"imagine"}]
+		
+		You should return only pipeline json.
+		Do not return any additional text.
+		Do not describe the pipeline. Just return the pipeline json.
+
+		'prompt' field in the block is a prompt for GPT-3 model. Do not use it for asking questions to the user.
+		'active' should be set to false for all blocks. It is used to show which block is currently active.
 		`;
 		generating = true;
 		return await handlers.promptHandler(prompt, input).finally(() => {
@@ -419,9 +445,11 @@
 			</Cell>
 			<Cell span={1} />
 			<Cell span={1}>
-				<Button on:click={async () => {
-					applyGeneratedPipeline(generatedPipeline);
-				}}>
+				<Button
+					on:click={async () => {
+						applyGeneratedPipeline(generatedPipeline);
+					}}
+				>
 					<Label>apply</Label>
 				</Button>
 			</Cell>
@@ -438,6 +466,37 @@
 			<Label>close</Label>
 		</Button>
 	</Actions>
+</Dialog>
+
+<Dialog bind:open={tutorial} aria-labelledby="simple-title" aria-describedby="simple-content">
+	<!-- Title cannot contain leading whitespace due to mdc-typography-baseline-top() -->
+	<Title id="simple-title">How to use</Title>
+	<Content id="simple-content">
+		<div class="tutorial">
+			<p>To use the pipeline generator, follow these steps:</p>
+			<ul>
+				<li>Create a new pipeline or select an existing one from the list.</li>
+				<li>
+					Add blocks to the pipeline by clicking on the corresponding buttons. There are four types
+					of blocks: prompt, google, crawl, and imagine.
+				</li>
+				<li>Configure each block by entering the necessary information in the input fields.</li>
+				<li>Arrange the blocks in the desired order by using the up and down arrow buttons.</li>
+				<li>
+					Run the pipeline by clicking on the "play" button. The output of each block will be passed
+					as input to the next block in the pipeline.
+				</li>
+				<li>Save the pipeline by clicking on the "save" button.</li>
+				<li>
+					If you want to import or export a pipeline, use the JSON editor at the bottom of the page.
+				</li>
+				<li>
+					To generate a new pipeline based on a specific goal, click on the "generate" button and
+					enter a prompt. The generator will create a new pipeline based on your input.
+				</li>
+			</ul>
+		</div>
+	</Content>
 </Dialog>
 
 <style>
@@ -466,7 +525,7 @@
 		box-sizing: border-box;
 	}
 
-	.primary {
+	.tutorial {
 		background-color: var(--mdc-theme-primary);
 	}
 </style>
