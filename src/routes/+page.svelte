@@ -155,13 +155,15 @@
 			name: 'Post image',
 			blocks: [
 				{
-					prompt: defaultPrompt,
+					prompt:
+						'Based on provided input about blog post, generate idea of one image that could be used as a cover. Only generate one idea. And describe what should be on that image as thoroughly as possible',
 					input: '',
 					output: '',
 					handler: 'prompt',
 					active: false,
 					type: 'prompt'
-				}
+				},
+				{ prompt: '', input: '', output: '', handler: 'imagine', active: false, type: 'imagine' }
 			]
 		},
 		{
@@ -215,7 +217,7 @@
 	const importPipeline = (jsonString: string) => {
 		const newPipeline = JSON.parse(jsonString);
 		pipelines[currentPipeline].blocks = newPipeline;
-
+		blocks = newPipeline;
 		pipelines = pipelines;
 	};
 
@@ -243,6 +245,7 @@
 						on:click={() => {
 							blocks = pipelines[index].blocks;
 							currentPipeline = index;
+							jsonBlocks = JSON.stringify(blocks);
 						}}
 					>
 						{#if editingPipelineName === index}

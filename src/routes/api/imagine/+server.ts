@@ -11,8 +11,12 @@ export const POST = async (event) => {
     }
 
     const model = prompt.includes('logo') ? logo : image
- 
-    let result = await replicate.run(model, { prompt })
-
-    return json({ result });
+    
+    try {
+        const result = await replicate.run(model, { prompt })
+        return json({ result });
+    } catch (error) {
+        console.log(error)
+        return json({ error: 'Something went wrong' });
+    }
 }

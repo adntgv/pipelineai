@@ -38,11 +38,12 @@
 		</Cell>
 		{#if block.type == 'prompt'}
 			<Cell span={12}>
-				<Textfield style="width: 100%;" textarea bind:value={block.prompt} label="prompt" />
+				<Textfield style="width: 100%; height: 200px;"
+				textarea bind:value={block.prompt} label="prompt" />
 			</Cell>
 		{/if}
 		<Cell span={12}>
-			<Textfield style="width: 100%;" bind:value={block.input} label="input" />
+			<Textfield textarea style="width: 100%;" bind:value={block.input} label="input" />
 		</Cell>
 		<Cell span={12}>
 			<Group>
