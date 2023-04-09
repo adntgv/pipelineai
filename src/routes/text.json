@@ -1,0 +1,26 @@
+[
+    {
+        "prompt": "",
+        "input": "https://devspace.kz",
+        "output": "",
+        "handler": "crawl",
+        "active": false,
+        "type": "crawl"
+    },
+    {
+        "prompt": "Explain what that is this site about",
+        "input": "",
+        "output": "",
+        "handler": "prompt",
+        "active": false,
+        "type": "prompt"
+    },
+    {
+        "prompt": "Generate post ideas for that website that would be interesting for the potential target audience. Return the list as the ",
+        "input": "",
+        "output": "",
+        "handler": "prompt",
+        "active": false,
+        "type": "prompt"
+    }
+]

@@ -56,15 +56,16 @@ let crawlhandler: BlockHandler = async (_, url: string) => {
             url
         })
     })
-        .then((data) => data.json())
+        .then((data) => data.text())
         .catch((err) => {
             console.log(err);
             return {
                 error: 'Something went wrong'
             };
         });
-
-    return data.text();
+    
+        console.log(data)
+    return await data.toString();
 };
 
 let imaginehandler: BlockHandler = async (_, input: string) => {
@@ -77,7 +78,7 @@ let imaginehandler: BlockHandler = async (_, input: string) => {
             prompt: input
         })
     })
-        .then((data) => data.json())
+        .then((data) => data.text())
         .catch((err) => {
             console.log(err);
             return {
@@ -85,7 +86,7 @@ let imaginehandler: BlockHandler = async (_, input: string) => {
             };
         });
 
-    return data.text();
+    return data.toString();
 };
 
 const getHandler = (name: string): any => {

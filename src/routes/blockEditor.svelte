@@ -6,6 +6,7 @@
 	import Textfield from '@smui/textfield';
 	import type { RunBlock } from './types';
 	import handlers from './handlers';
+	import { Text } from '@smui/list';
 
 	export let block: RunBlock;
 
@@ -68,7 +69,15 @@
 			{#if block.active}
 				<LinearProgress indeterminate />
 			{/if}
-			<p>Output: {block.output}</p>
+			<div>
+				{#if block.type == 'crawl'}
+					Output: {block.output.slice(0, 100)}...
+				{:else}
+					Output: {#each block.output.split('\n').filter((line) => line !== '<div></div>') as line}
+						<div>{line}</div>
+					{/each}
+				{/if}
+			</div>
 			{#if block.type == 'imagine' && block.output}
 				{#each getLinks(block.output) as image}
 					<!-- svelte-ignore a11y-missing-attribute -->

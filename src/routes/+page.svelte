@@ -11,6 +11,7 @@
 	import { onMount } from 'svelte';
 	import handlers from './handlers';
 	import Actions from '@smui/card/src/Actions.svelte';
+	import IconButton from '@smui/icon-button';
 
 	const defaultPrompt =
 		'You are helpful AI. Respod only in JSON format! No need for additional information. You respond only with useful content formatted as json. If you have a list of items, return them only as json array';
@@ -121,6 +122,36 @@
 
 	let pipelines: Pipeline[] = [
 		{
+			name: 'Post ideas',
+			blocks: [
+				{
+					prompt: '',
+					input: 'https://devspace.kz',
+					output: '',
+					handler: 'crawl',
+					active: false,
+					type: 'crawl'
+				},
+				{
+					prompt: 'Explain what that is this site about',
+					input: '',
+					output: '',
+					handler: 'prompt',
+					active: false,
+					type: 'prompt'
+				},
+				{
+					prompt:
+						'Generate post ideas for that website that would be interesting for the potential target audience. Return the list as the ',
+					input: '',
+					output: '',
+					handler: 'prompt',
+					active: false,
+					type: 'prompt'
+				}
+			]
+		},
+		{
 			name: 'Post image',
 			blocks: [
 				{
@@ -174,11 +205,18 @@
 
 	let debug = true;
 
-	$: jsonBlocks = JSON.stringify(blocks);
+	let jsonBlocks = JSON.stringify(blocks);
 
 	const savePipeline = () => {
 		pipelines[currentPipeline].blocks = blocks;
 		localStorage.setItem('pipelines', JSON.stringify(pipelines));
+	};
+
+	const importPipeline = (jsonString: string) => {
+		const newPipeline = JSON.parse(jsonString);
+		pipelines[currentPipeline].blocks = newPipeline;
+
+		pipelines = pipelines;
 	};
 
 	onMount(() => {
@@ -195,7 +233,9 @@
 <div class="drawer-container">
 	<Drawer>
 		<Content>
-			<Button variant="outlined" on:click={() => addPipeline()}>Add Pipeline</Button>
+			<div>
+				<IconButton class="material-icons" on:click={() => addPipeline()}>add</IconButton>
+			</div>
 			<List>
 				{#each pipelines as pipeline, index}
 					<Item
@@ -206,11 +246,29 @@
 						}}
 					>
 						{#if editingPipelineName === index}
+							<IconButton
+								size="button"
+								class="material-icons"
+								on:click={() => (editingPipelineName = -1)}>save</IconButton
+							>
 							<Textfield style="width: 100%;" bind:value={pipeline.name} label="name" />
-							<Button on:click={() => (editingPipelineName = -1)}>save</Button>
 						{:else}
+							<IconButton
+								size="button"
+								class="material-icons"
+								on:click={() => (editingPipelineName = index)}>edit</IconButton
+							>
+							<IconButton
+								size="button"
+								class="material-icons"
+								on:click={() => {
+									if (index == pipelines.length - 1) {
+										currentPipeline = 0;
+									}
+									pipelines = pipelines.filter((_, i) => i != index);
+								}}>delete</IconButton
+							>
 							<Text>{pipeline.name}</Text>
-							<Button on:click={() => (editingPipelineName = index)}>rename</Button>
 						{/if}
 					</Item>
 				{/each}
@@ -226,9 +284,9 @@
 				<Group style="margin: 0 auto;" variant="outlined">
 					<Button disabled>{pipelines[currentPipeline].name}</Button>
 					<!-- <ApiKeyDialog /> -->
-					<Button variant="outlined" on:click={() => runPipeline()}>Run Pipeline</Button>
-					<Button variant="outlined" on:click={() => stopPipeline()}>Stop Pipeline</Button>
-					<Button variant="outlined" on:click={() => savePipeline()}>Save</Button>
+					<IconButton class="material-icons" on:click={() => runPipeline()}>play_arrow</IconButton>
+					<IconButton class="material-icons" on:click={() => stopPipeline()}>stop</IconButton>
+					<IconButton class="material-icons" on:click={() => savePipeline()}>save</IconButton>
 				</Group>
 				<Group style="margin: 0 auto;" variant="outlined">
 					<Button variant="outlined" on:click={() => addBlock('prompt')}>+ Prompt</Button>
@@ -265,6 +323,7 @@
 			</LayoutGrid>
 			{#if debug}
 				<Textfield style="width:100%; height:fit-content" textarea bind:value={jsonBlocks} />
+				<Button on:click={() => importPipeline(jsonBlocks)}>Import</Button>
 			{/if}
 		</main>
 	</AppContent>
