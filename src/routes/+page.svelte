@@ -13,13 +13,14 @@
 	import Actions from '@smui/card/src/Actions.svelte';
 	import IconButton from '@smui/icon-button';
 	import Dialog, { Title } from '@smui/dialog';
+	import LinearProgress from '@smui/linear-progress';
 
 	const defaultPrompt =
 		'You are helpful AI. Respod only in JSON format! No need for additional information. You respond only with useful content formatted as json. If you have a list of items, return them only as json array';
 
 	let piplineGeneratorPrompt = '';
 	let generatedPipeline = '';
-
+	let generating = false;
 	let open = false;
 	let canRun = true;
 	// Run the pipeline
@@ -230,7 +231,18 @@
 		let prompt = `
 		
 		`;
-		return await handlers.promptHandler(prompt, input);
+		generating = true;
+		return await handlers.promptHandler(prompt, input).finally(() => {
+			generating = false;
+		});
+	};
+
+	const applyGeneratedPipeline = (generated: string) => {
+		let newBlocks = JSON.parse(generated);
+		addPipeline();
+		pipelines[pipelines.length - 1].blocks = newBlocks;
+		pipelines = pipelines;
+		currentPipeline = pipelines.length - 1;
 	};
 
 	onMount(() => {
@@ -365,7 +377,7 @@
 		</main>
 	</AppContent>
 </div>
- 
+
 <Dialog bind:open aria-labelledby="simple-title" aria-describedby="simple-content">
 	<!-- Title cannot contain leading whitespace due to mdc-typography-baseline-top() -->
 	<Title id="simple-title">New Pipeline generator</Title>
@@ -391,6 +403,11 @@
 				</Button>
 			</Cell>
 			<Cell span={11} />
+			<Cell span={12}>
+				{#if generating}
+					<LinearProgress indeterminate />
+				{/if}
+			</Cell>
 			<Cell span={1} />
 			<Cell span={10}>
 				<Textfield
@@ -402,10 +419,9 @@
 			</Cell>
 			<Cell span={1} />
 			<Cell span={1}>
-				<Button
-					on:click={async () => {
-					}}
-				>
+				<Button on:click={async () => {
+					applyGeneratedPipeline(generatedPipeline);
+				}}>
 					<Label>apply</Label>
 				</Button>
 			</Cell>
