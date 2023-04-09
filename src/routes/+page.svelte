@@ -141,8 +141,7 @@
 					type: 'prompt'
 				},
 				{
-					prompt:
-						'Generate post ideas for that website that would be interesting for the potential target audience. Return the list as the ',
+					prompt:'Generate post ideas for that website that would be interesting for the potential target audience. Only return ideas, without any additional text',
 					input: '',
 					output: '',
 					handler: 'prompt',
