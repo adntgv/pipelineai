@@ -12,11 +12,15 @@
 	import handlers from './handlers';
 	import Actions from '@smui/card/src/Actions.svelte';
 	import IconButton from '@smui/icon-button';
-	import { Title } from '@smui/dialog';
+	import Dialog, { Title } from '@smui/dialog';
 
 	const defaultPrompt =
 		'You are helpful AI. Respod only in JSON format! No need for additional information. You respond only with useful content formatted as json. If you have a list of items, return them only as json array';
 
+	let piplineGeneratorPrompt = '';
+	let generatedPipeline = '';
+
+	let open = false;
 	let canRun = true;
 	// Run the pipeline
 	const runPipeline = async () => {
@@ -222,6 +226,13 @@
 		pipelines = pipelines;
 	};
 
+	const generatePipeline = async (input: string) => {
+		let prompt = `
+		
+		`;
+		return await handlers.promptHandler(prompt, input);
+	};
+
 	onMount(() => {
 		const stored = localStorage.getItem('pipelines');
 		if (stored) {
@@ -238,7 +249,6 @@
 		<Content>
 			<div>
 				<Title>Pipelines</Title>
-				<IconButton class="material-icons" on:click={() => addPipeline()}>add</IconButton>
 			</div>
 			<List>
 				{#each pipelines as pipeline, index}
@@ -278,6 +288,12 @@
 					</Item>
 				{/each}
 			</List>
+			<Group style="margin: 0 auto;" variant="outlined">
+				<Button variant="outlined" on:click={() => addPipeline()}>add</Button>
+				<Button variant="outlined" on:click={() => (open = true)}>
+					<Label>generate</Label>
+				</Button>
+			</Group>
 		</Content>
 	</Drawer>
 
@@ -349,6 +365,64 @@
 		</main>
 	</AppContent>
 </div>
+ 
+<Dialog bind:open aria-labelledby="simple-title" aria-describedby="simple-content">
+	<!-- Title cannot contain leading whitespace due to mdc-typography-baseline-top() -->
+	<Title id="simple-title">New Pipeline generator</Title>
+	<Content id="simple-content">
+		<LayoutGrid>
+			<Cell span={1} />
+			<Cell span={10}>
+				<Textfield
+					textarea
+					style="width:100%; height:fit-content"
+					bind:value={piplineGeneratorPrompt}
+					label="what do you want to accomplish?"
+				/>
+			</Cell>
+			<Cell span={1} />
+			<Cell span={1}>
+				<Button
+					on:click={async () => {
+						generatedPipeline = await generatePipeline(piplineGeneratorPrompt);
+					}}
+				>
+					<Label>generate</Label>
+				</Button>
+			</Cell>
+			<Cell span={11} />
+			<Cell span={1} />
+			<Cell span={10}>
+				<Textfield
+					textarea
+					style="width:100%; height:fit-content"
+					bind:value={generatedPipeline}
+					label="new pipeline"
+				/>
+			</Cell>
+			<Cell span={1} />
+			<Cell span={1}>
+				<Button
+					on:click={async () => {
+					}}
+				>
+					<Label>apply</Label>
+				</Button>
+			</Cell>
+			<Cell span={11} />
+		</LayoutGrid>
+	</Content>
+
+	<Actions>
+		<Button
+			on:click={() => {
+				open = false;
+			}}
+		>
+			<Label>close</Label>
+		</Button>
+	</Actions>
+</Dialog>
 
 <style>
 	/* These classes are only needed because the
