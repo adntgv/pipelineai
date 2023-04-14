@@ -38,8 +38,12 @@
 		</Cell>
 		{#if block.type == 'prompt'}
 			<Cell span={12}>
-				<Textfield style="width: 100%; height: 200px;"
-				textarea bind:value={block.prompt} label="prompt" />
+				<Textfield
+					style="width: 100%; height: 200px;"
+					textarea
+					bind:value={block.prompt}
+					label="prompt"
+				/>
 			</Cell>
 		{/if}
 		<Cell span={12}>
@@ -51,7 +55,8 @@
 					on:click={async () => {
 						block.active = true;
 
-						block.output = await handlers.getHandler(block.handler)(block.prompt, block.input);
+						block.output =
+							(await handlers.getHandler(block.handler)(block.prompt, block.input)) ?? '';
 						block.active = false;
 					}}
 				>

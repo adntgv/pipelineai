@@ -43,6 +43,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@dqbd/tiktoken": "^1.0.6",
 		"googlethis": "^1.7.1",
 		"midjourney-client": "^1.0.8",
 		"node-fetch": "^3.3.1",

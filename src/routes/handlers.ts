@@ -1,3 +1,4 @@
+import { text } from "@sveltejs/kit";
 import type { BlockHandler } from "./types";
 
 const host = '';
@@ -35,15 +36,13 @@ let googlehandler: BlockHandler = async (_, input: string) => {
             search: input
         })
     })
-        .then((data) => data.json())
+        .then((data) => data.text())
         .catch((err) => {
             console.log(err);
-            return {
-                error: 'Something went wrong'
-            };
+            return 'Something went wrong'
         });
-
-    return data.text();
+    console.log(data)
+    return await data;
 };
 
 let crawlhandler: BlockHandler = async (_, url: string) => {
@@ -63,8 +62,7 @@ let crawlhandler: BlockHandler = async (_, url: string) => {
                 error: 'Something went wrong'
             };
         });
-    
-        console.log(data)
+
     return await data.toString();
 };
 
