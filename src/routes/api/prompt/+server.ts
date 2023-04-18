@@ -13,18 +13,18 @@ export const POST = async (event) => {
         });
         const openai = new OpenAIApi(configuration);
 
-        if (tooLong(prompt + message)) {
+        if (tooLong(prompt + message)) { 
             let chunks = getChunks(message);
             let summaries: string[] = [];
 
-            for (let chunk of chunks) {
+            for (let chunk of chunks) { 
                 const summary = await summarize(openai, chunk);
                 summaries.push(summary);
             }
 
             message = await summarize(openai, summaries.join(" "));
         }
-
+ 
         const completion = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
             messages: [
@@ -70,7 +70,9 @@ const getChunks = (request: string, forResponse: number = 1024): string[] => {
 
     while (data.length > 0) {
         const chunk = data.slice(0, 4096 - forResponse)
-        chunks.push(enc.decode(chunk).toString());
+        data = data.slice(4096 - forResponse, data.length)
+        const part = new TextDecoder().decode(enc.decode(chunk))
+        chunks.push(part);
     }
 
     return chunks;

@@ -1,13 +1,10 @@
 <script lang="ts">
 	import LayoutGrid, { Cell } from '@smui/layout-grid';
-	import ApiKeyDialog from './apiKeyDialog.svelte';
-	import Block from './block.svelte';
-	import type { BlockHandler, Pipeline, RunBlock } from './types';
+	import type { Pipeline, RunBlock } from './types';
 	import Button, { Group, Icon, Label } from '@smui/button';
 	import Drawer, { AppContent, Content } from '@smui/drawer';
 	import List, { Item, Text } from '@smui/list';
 	import Textfield from '@smui/textfield';
-	import Card from '@smui/card/src/Card.svelte';
 	import { onMount } from 'svelte';
 	import handlers from './handlers';
 	import Actions from '@smui/card/src/Actions.svelte';
@@ -15,7 +12,6 @@
 	import Dialog, { Title } from '@smui/dialog';
 	import LinearProgress from '@smui/linear-progress';
 	import TableView from './tableView.svelte';
-	import NodeView from './nodeView.svelte';
 
 	const defaultPrompt =
 		'You are helpful AI. Respod only in JSON format! No need for additional information. You respond only with useful content formatted as json. If you have a list of items, return them only as json array';
@@ -25,7 +21,7 @@
 	let generating = false;
 	let open = false;
 	let canRun = true;
-	let tutorial = true;
+	let tutorial = false;
 	// Run the pipeline
 	const runPipeline = async () => {
 		canRun = true;
@@ -333,7 +329,11 @@
 				<Button variant="outlined" on:click={() => (open = true)}>
 					<Label>generate</Label>
 				</Button>
+				<Button variant="outlined" on:click={() => (tutorial = true)}>
+					<Label>help</Label>
+				</Button>
 			</Group>
+			<p>by adntgv</p>
 		</Content>
 	</Drawer>
 
@@ -352,8 +352,6 @@
 			{remove}
 			{jsonBlocks}
 		/>
-
-		<NodeView />
 	</AppContent>
 </div>
 
